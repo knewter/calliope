@@ -6,13 +6,35 @@ defmodule CalliopeTokenizerTest do
   @haml %s{
 !!! 5
 %section.container
-  %h1 Calliope
+  %h1= arg
   / %h1 An important inline comment
   /[if IE]
     %h2 An Elixir Haml Parser
   .content
     = arg
     Welcome to Calliope}
+
+  @haml_with_lc %s{
+%section
+  = lc { id, headline, content } inlist posts do
+    %article
+      %h1
+        %a{href: "#"}= headline
+      %p
+        = content
+}
+
+  test :tokenize_haml_with_lc do
+    assert [
+      ["%section"],
+      ["\t", "= lc ", "{ id, headline, content }", "inlist posts do"],
+      ["\t\t", "%article"],
+      ["\t\t\t", "%h1"],
+      ["\t\t\t\t", "%a", "{href: \"#\"}", "= headline"],
+      ["\t\t\t", "%p"],
+      ["\t\t\t\t", "= content"]
+    ] == tokenize(@haml_with_lc)
+  end
 
   test :tokenize_inline_haml do
     inline = "%div Hello Calliope"
@@ -23,7 +45,7 @@ defmodule CalliopeTokenizerTest do
     assert [
       ["!!! 5"],
       ["%section", ".container"],
-      ["\t", "%h1", "Calliope"],
+      ["\t", "%h1", "= arg"],
       ["\t", "/ ", "%h1", "An important inline comment"],
       ["\t", "/[if IE]"],
       ["\t\t", "%h2", "An Elixir Haml Parser"],

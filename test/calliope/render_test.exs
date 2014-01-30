@@ -7,7 +7,7 @@ defmodule CalliopeRenderTest do
 !!! 5
 %section.container{class: "blue"}
   %article
-    %h1 Calliope
+    %h1= arg
     / %h1 An important inline comment
     /[if IE]
       %h2 An Elixir Haml Parser
@@ -31,7 +31,7 @@ defmodule CalliopeRenderTest do
   @haml_with_args "= arg"
 
   test :render do
-    assert @html == render @haml
+    assert @html == render @haml, [ arg: "Calliope" ]
   end
 
   test :render_with_params do
