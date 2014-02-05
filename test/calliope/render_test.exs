@@ -29,6 +29,7 @@ defmodule CalliopeRenderTest do
   }, "")
 
   @haml_with_args "= arg"
+  @haml_with_args_in_attributes "%a{href: url}= name"
 
   test :render do
     assert @html == render @haml, [ arg: "Calliope" ]
@@ -36,5 +37,9 @@ defmodule CalliopeRenderTest do
 
   test :render_with_params do
     assert "Calliope" == render @haml_with_args, [ arg: "Calliope" ]
+  end
+
+  test :render_with_params_inside_attribute_value do
+    assert "<a href='http://slashdot.org'>Slashdot</a>" == render @haml_with_args_in_attributes, [ url: "http://slashdot.org", name: "Slashdot" ]
   end
 end
