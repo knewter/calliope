@@ -5,14 +5,15 @@ defmodule Calliope.Mixfile do
 
   def project do
     [ app: :calliope,
-      version: "0.2.1",
-      elixir: ">= 0.13.3",
+      version: "0.4.1",
+      elixir: "~> 1.4",
       deps: [],
       package: [
         files: ["lib", "mix.exs", "README*", "LICENSE*"],
-        contributors: ["Johnny Winn"],
+        contributors: ["Johnny Winn", "Stephen Pallen"],
+        maintainers: ["Johnny Winn", "Stephen Pallen"],
         licenses: ["Apache 2.0"],
-        links: [ github: "https://github.com/nurugger07/calliope" ] 
+        links: %{ "Github" => "https://github.com/nurugger07/calliope" }
       ],
       description: """
       An Elixir library for parsing haml templates.

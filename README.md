@@ -1,6 +1,6 @@
 ![Calliope](http://f.cl.ly/items/0T3a1a1w472z2o3p0d3O/6660441229_f6503a0dd2_b.jpg)
 
-# Calliope - An Elixir Haml Parser
+# Calliope - An Elixir Haml Parser [![Build Status](https://travis-ci.org/nurugger07/calliope.png?branch=master)](https://travis-ci.org/nurugger07/calliope)
 
 For those of you that prefer the poetic beauty of [HAML](https://github.com/haml/haml) templates over HTML, then Calliope is the package for you. Calliope is a parser written in [Elixir](http://elixir-lang.org/) that will render HAML/Elixir templates into HTML. For example, we can render the following HAML:
 
@@ -36,11 +36,11 @@ Calliope is simple to add to any project. If you are using the hex package manag
 
 ``` elixir
 def deps do
-  [ { :calliope, '~> 0.2.1' } ]
+  [ { :calliope, '~> 0.3.0' } ]
 end
 ```
 
-If you aren't using hex, add the a reference to the github repo.
+If you aren't using hex, add the reference to the github repo.
 
 ``` elixir
 def deps do
@@ -138,10 +138,12 @@ Calliope will render:
 
 Calliope doesn't just evaluate arguments, you can actually embed Elixir directly into the templates:
 
+### for
+
 ``` haml
-- lc { id, headline, content } inlist posts do
+- for { id, headline, content } <- posts do
   %h1
-    %a{href: "posts/#{id}"= headline
+    %a{href: "posts/#{id}"}= headline
   .content
     = content
 ```
@@ -169,8 +171,92 @@ Will render
 </div>
 ```
 
+### if, else, and unless
+
+``` haml
+- if post do 
+  %h1= post.title
+  - if post.comments do
+    %p Has some comments
+  - else
+    %p No Comments
+- unless user_guest(user)
+  %a{href: "posts/edit/#{id}"}= Edit
+```
+
+### case
+
+``` haml
+- case example do
+  - "one" -> 
+    %p Example one
+  - other -> 
+    %p Other Example  
+      #{other}
+```
+
+### Local Variables
+
+``` haml
+- answer = 42
+%p= "What is the answer #{answer}"
+```
+
+### Anonymous Functions
+
+``` haml
+- form_for @changeset, @action, fn f ->
+  .form-group
+    = label f, :name, "Name", class: "control-label" 
+    = text_input f, :name, class: "form-control" 
+  .form-group
+    = submit "Submit", class: "btn btn-primary" 
+```
+
+## Precompile Templates
+
+Calliope provides an Engine to precompile your haml templates into functions. This parses the template at compile time and creates a function that takes the name and args needed to render the page. These functions are scoped to the module that uses the engine.
+
+Adding this functionality is easy.
+
+``` elixir
+  defmodule Simple do
+
+    use Calliope.Engine
+
+    def show do
+      content_for(:show, [title: Calliope])
+    end
+
+  end
+```
+
+If you are using layouts, you can set the layout and call the `content_with_layout` function.
+
+``` elixir
+  defmodule Simple do
+
+    use Calliope.Engine, layout: "application"
+
+    def show do
+      content_with_layout(:show, [title: Calliope])
+    end
+
+  end
+```
+
+In addition to `:layout`, you can also set the following options:
+
+`:path` - provides the root path. The default is the current working directory.
+`:templates` - used to define where the templates are stored. By default it will use `:path`
+`:alias` - used to set the directory where the templates are located. The
+            default value is 'templates'.
+`:layout_directory` - the directory that your layouts are stored relative to the
+             templates path. The default directory is `layouts`
+`:layout` - the layout to use for templates. The default is `:none` or you can pass in
+            the name of a layout.
+
 ## Coming Soon
 
-* Rendering Elixir conditionals
 * Rendering partials
 * Exception messages
